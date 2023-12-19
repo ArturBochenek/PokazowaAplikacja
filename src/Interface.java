@@ -16,9 +16,9 @@ public class Interface {
         frame.setSize(800, 300);
         JPanel panel = new JPanel(new BorderLayout());
 
-        JLabel welcomeLabel = new JLabel("Witaj w Aplikacji Szwagro-Inwesto-Pol!");
-        JButton showInvestmentsButton = new JButton("Pokaż inwestycje");
-        JButton showAddInvestmentsButton = new JButton("Dodaj Zakup");
+        JLabel welcomeLabel = new JLabel("Szwagro-Inwesto-Pol");
+        JButton showInvestmentsButton = new JButton("Show My Trades");
+        JButton showAddInvestmentsButton = new JButton("Add Trade");
 
         panel.add(welcomeLabel, BorderLayout.NORTH);
         panel.add(showInvestmentsButton, BorderLayout.WEST);
@@ -37,7 +37,7 @@ public class Interface {
         frame.setVisible(true);
     }
     private static void showInvestmentsInformation() throws IOException {
-        List<Transaction> transactions = Main.tranzakcje;
+        List<Transaction> transactions = Main.transactions;
 
         Object[][] data = new Object[transactions.size()][8];
 
@@ -50,9 +50,9 @@ public class Interface {
             data[i][4] = transaction.getCurrentValue() * transaction.getQuantity();
             data[i][5] = transaction.getCurrentValue() * transaction.getQuantity() - transaction.getInitialValue();
             data[i][6] = transaction.getCurrentValue() * transaction.getQuantity() / transaction.getInitialValue() * 100;
-            data[i][7] = "Usuń";
+            data[i][7] = "Delete";
         }
-        String[] columnNames = {"Nazwa", "Ilość", "Wartość Początkowa", "Kurs", "Obecna Wartość", "Bilans", "%", String.valueOf(Count.seconds)};
+        String[] columnNames = {"Name", "Quantity", "Bought for", "Exchange", "Current price", "USD Balance", "%", String.valueOf(Count.seconds)};
 
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
         table = new JTable(tableModel);
@@ -68,12 +68,12 @@ public class Interface {
         table.getColumnModel().getColumn(7).setCellRenderer(new ButtonRenderer());
         table.getColumnModel().getColumn(7).setCellEditor(new ButtonEditor());
 
-        JOptionPane.showMessageDialog(frame, new JScrollPane(table), "Informacje o inwestycjach", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(frame, new JScrollPane(table), "Show My Trades", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static void refreshTable() throws IOException {
         if (table != null) {
-            List<Transaction> transactions = Main.tranzakcje;
+            List<Transaction> transactions = Main.transactions;
 
             Object[][] data = new Object[transactions.size()][8];
 
@@ -86,7 +86,7 @@ public class Interface {
                 data[i][4] = transaction.getCurrentValue() * transaction.getQuantity();
                 data[i][5] = transaction.getCurrentValue() * transaction.getQuantity() - transaction.getInitialValue();
                 data[i][6] = transaction.getCurrentValue() * transaction.getQuantity() / transaction.getInitialValue() * 100;
-                data[i][7] = "Usuń";
+                data[i][7] = "Delete";
             }
 
             DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
@@ -108,7 +108,7 @@ public class Interface {
     }
 
     private static String[] getColumnNames() {
-        return new String[]{"Nazwa", "Ilość", "Wartość Początkowa", "Kurs", "Obecna Wartość", "Bilans", "%", String.valueOf(Count.seconds)};
+        return new String[]{"Name", "Quantity", "Bought for", "Exchange", "Current price", "USD Balance", "%", String.valueOf(Count.seconds)};
     }
 
     static class ButtonRenderer extends JButton implements TableCellRenderer {
@@ -127,7 +127,7 @@ public class Interface {
         private int currentRow;
 
         public ButtonEditor() {
-            deleteButton = new JButton("Usuń");
+            deleteButton = new JButton("Delete");
             deleteButton.setOpaque(true);
             deleteButton.addActionListener(this);
         }
@@ -145,7 +145,7 @@ public class Interface {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentRow >= 0 && currentRow < Main.tranzakcje.size()) {
+            if (currentRow >= 0 && currentRow < Main.transactions.size()) {
                 try {
                     FileHandler.deleteTransaction(currentRow);
                     refreshTable();
@@ -166,23 +166,23 @@ public class Interface {
     }
 
     private static void addNewTransaction() {
-        JFrame addTransactionFrame = new JFrame("Dodaj nową transakcję");
+        JFrame addTransactionFrame = new JFrame("Add new trade");
         addTransactionFrame.setSize(400, 200);
         addTransactionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JPanel panel = new JPanel(new GridLayout(4, 2));
 
-        JLabel cryptoLabel = new JLabel("Kryptowaluta:");
+        JLabel cryptoLabel = new JLabel("Cryptocurrency:");
 
-        JComboBox<String> cryptoComboBox = new JComboBox<>(Api.Kryptowaluty);
+        JComboBox<String> cryptoComboBox = new JComboBox<>(Api.CryptoCurrencies);
 
-        JLabel quantityLabel = new JLabel("Ilość:");
+        JLabel quantityLabel = new JLabel("Quantity:");
         JTextField quantityField = new JTextField();
 
-        JLabel valueLabel = new JLabel("Wartość w USD: (Za ile kupiono)");
+        JLabel valueLabel = new JLabel("Bought for total USD:");
         JTextField valueField = new JTextField();
 
-        JButton confirmButton = new JButton("Zatwierdź");
+        JButton confirmButton = new JButton("Approve");
 
         confirmButton.addActionListener(e -> {
             String selectedCrypto = (String) cryptoComboBox.getSelectedItem();

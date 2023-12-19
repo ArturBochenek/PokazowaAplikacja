@@ -4,17 +4,15 @@ import java.util.List;
 
 public class FileHandler {
     private final static String txtFilePath = System.getProperty("user.dir") + File.separator + "Transactions";
-    private final static String CryptoFilePath = System.getProperty("user.dir") + File.separator + "Cryptolist";
+    private final static String CryptoListPath = System.getProperty("user.dir") + File.separator + "Cryptolist";
     public static void saveToFile(Transaction transaction) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(txtFilePath, true))) {
             writer.write(transaction.getName() + "," + transaction.getQuantity() + "," + transaction.getInitialValue());
             writer.newLine();
-            System.out.println("Pomyślnie zapisano obiekt do pliku tekstowego.");
         } catch (IOException e) {
-            System.out.println("Błąd podczas zapisywania do pliku tekstowego.");
             e.printStackTrace();
         }
-        Main.tranzakcje.add(transaction);
+        Main.transactions.add(transaction);
     }
 
     public static List<Transaction> getAllTransactions() {
@@ -33,9 +31,7 @@ public class FileHandler {
                     transactions.add(new Transaction(name, quantity, initialValue));
                 }
             }
-
         } catch (IOException e) {
-            System.out.println("Błąd podczas odczytu z pliku tekstowego.");
             e.printStackTrace();
         }
 
@@ -46,11 +42,8 @@ public class FileHandler {
         List<Transaction> transactions = getAllTransactions();
         if (index >= 0 && index < transactions.size()) {
             transactions.remove(index);
-            Main.tranzakcje.remove(index);
+            Main.transactions.remove(index);
             saveAllTransactions(transactions);
-            System.out.println("Pomyślnie usunięto transakcję o indeksie " + index);
-        } else {
-            System.out.println("Nieprawidłowy indeks transakcji.");
         }
         Interface.refreshTable();
     }
@@ -62,27 +55,21 @@ public class FileHandler {
                 writer.newLine();
             }
         } catch (IOException e) {
-            System.out.println("Błąd podczas zapisywania wszystkich transakcji do pliku tekstowego.");
             e.printStackTrace();
         }
     }
-    public static String[] wczytajZPliku() {
-        List<String> listaKryptowalut = new ArrayList<>();
+    public static String[] LoadCryptoFromFile() {
+        List<String> CryptoList = new ArrayList<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(CryptoFilePath))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(CryptoListPath))) {
             String linia;
             while ((linia = reader.readLine()) != null) {
-                listaKryptowalut.add(linia);
+                CryptoList.add(linia);
             }
-        } catch (IOException e) {
-            System.err.println("Wystąpił błąd podczas wczytywania pliku: " + e.getMessage());
-        }
-
-
-        String[] kryptowaluty = new String[listaKryptowalut.size()];
-        kryptowaluty = listaKryptowalut.toArray(kryptowaluty);
-
-        return kryptowaluty;
+        } catch (IOException ignored) {}
+        String[] CryptoCurrencies = new String[CryptoList.size()];
+        CryptoCurrencies = CryptoList.toArray(CryptoCurrencies);
+        return CryptoCurrencies;
     }
 }
 

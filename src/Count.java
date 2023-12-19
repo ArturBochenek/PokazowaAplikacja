@@ -4,7 +4,6 @@ import java.util.stream.Collectors;
 
 public class Count extends Thread {
     public static int seconds = 60;
-
     @Override
     public void run() {
         try {
@@ -27,13 +26,13 @@ public class Count extends Thread {
     }
 
     private static void refreshPrices() {
-        List<Transaction> transactions = Main.tranzakcje;
+        List<Transaction> transactions = Main.transactions;
         List<String> cryptocurrencyNames = transactions.stream()
                 .map(Transaction::getName)
                 .collect(Collectors.toList());
 
         try {
-            List<Double> prices = Api.getKurs(cryptocurrencyNames);
+            List<Double> prices = Api.GetExchange(cryptocurrencyNames);
 
             if (!prices.isEmpty() && prices.size() == transactions.size()) {
                 for (int i = 0; i < transactions.size(); i++) {
@@ -43,7 +42,7 @@ public class Count extends Thread {
                 }
                 Interface.refreshTable();
             } else {
-                System.out.println("Received empty or mismatched prices list");
+                System.out.println("Not compatible Currency");
             }
         } catch (IOException e) {
             e.printStackTrace();

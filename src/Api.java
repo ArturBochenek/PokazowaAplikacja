@@ -7,10 +7,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 public class Api {
-    public static String[] Kryptowaluty = FileHandler.wczytajZPliku();
+    public static String[] CryptoCurrencies = FileHandler.LoadCryptoFromFile();
 
-    public static List<Double> getKurs(List<String> nazwyKryptowalut) throws IOException {
-        String joinedNames = String.join(",", nazwyKryptowalut);
+    public static List<Double> GetExchange(List<String> Name) throws IOException {
+        String joinedNames = String.join(",", Name);
         URL url = new URL("https://api.coingecko.com/api/v3/simple/price?ids=" + joinedNames + "&vs_currencies=USD");
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -42,7 +42,7 @@ public class Api {
         try {
             JSONObject jsonResponse = new JSONObject(response);
 
-            for (Transaction transaction : Main.tranzakcje) {
+            for (Transaction transaction : Main.transactions) {
                 String cryptocurrencyName = transaction.getName();
 
                 if (jsonResponse.has(cryptocurrencyName)) {
